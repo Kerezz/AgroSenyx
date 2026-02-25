@@ -28,6 +28,39 @@
             } else {
                 $sql = "INSERT INTO users (username, email, password) VALUES ('$username', '$email', '$password')";
                 if (mysqli_query($conn, $sql)) {
+
+                    $new_user_id = mysqli_insert_id($conn);
+
+                    // Dodavanje parcela
+                    mysqli_query($conn, "
+                        INSERT INTO fields (user_id, field_name) 
+                        VALUES 
+                        ('$new_user_id', 'Ravnica'),
+                        ('$new_user_id', 'Dolina')
+                    ");
+
+                    // Uzimamo ID parcela koje smo upravo dodali
+                    $field_ids = mysqli_query($conn, "
+                        SELECT id FROM fields 
+                        WHERE user_id='$new_user_id'
+                        ORDER BY id ASC
+                        LIMIT 2
+                    ");
+
+                    $ids = [];
+                    while($row = mysqli_fetch_assoc($field_ids)){
+                        $ids[] = $row['id'];
+                    }
+
+                    // Demo senzorski podaci za obe parcele
+                    mysqli_query($conn, "
+                        INSERT INTO sensors 
+                        (field_id, soil_moisture, soil_temp, ph_value, ec_value, air_humidity, rainfall, last_updated)
+                        VALUES
+                        ('$ids[0]', 43.2, 18.5, 6.8, 1.2, 60, 0, NOW()),
+                        ('$ids[1]', 31.5, 19.2, 6.7, 1.3, 60, 0, NOW())
+                    ");
+
                     echo "<p style='color:green; margin-top: 15px;'>Uspeh! <a href='index.php'>Prijavi se</a></p>";
                 }
             }
