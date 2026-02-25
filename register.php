@@ -31,7 +31,6 @@
 
                     $new_user_id = mysqli_insert_id($conn);
 
-                    // Dodavanje parcela
                     mysqli_query($conn, "
                         INSERT INTO fields (user_id, field_name) 
                         VALUES 
@@ -39,7 +38,7 @@
                         ('$new_user_id', 'Dolina')
                     ");
 
-                    // Uzimamo ID parcela koje smo upravo dodali
+                
                     $field_ids = mysqli_query($conn, "
                         SELECT id FROM fields 
                         WHERE user_id='$new_user_id'
@@ -52,7 +51,6 @@
                         $ids[] = $row['id'];
                     }
 
-                    // Demo senzorski podaci za obe parcele
                     mysqli_query($conn, "
                         INSERT INTO sensors 
                         (field_id, soil_moisture, soil_temp, ph_value, ec_value, air_humidity, rainfall, last_updated)
